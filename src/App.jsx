@@ -1,16 +1,69 @@
 import { useWeb3 } from "@3rdweb/hooks";
 import { ThirdwebSDK } from "@3rdweb/sdk";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
+import { ethers } from "ethers";
 
 const sdk = new ThirdwebSDK("rinkeby");
 const bundleDrop = sdk.getBundleDropModule(
   "0x616b3164e44F169E0725eBf440A75bcFc4B951D9"
+);
+const tokenModule = sdk.getTokenModule(
+  "0xB51B51BBDcfEc95af4fb5a32Fa32FB1EC7dbBbc2"
 );
 
 const App = () => {
   const { connectWallet, address, error, provider } = useWeb3();
   console.log("👋 Address:", address);
   const [hasClaimedNFT, setHasClaimedNFT] = useState(false);
+
+  const [memberTokenAmounts, setMemberTokenAmounts] = useState({});
+  const [memberAddresses, setMemberAddresses] = useState([]);
+
+  const shortenAddress = (str) => {
+    return str.substring(0, 6) + "..." + str.substring(str.length - 4);
+  };
+
+  useEffect(() => {
+    if (!hasClaimedNFT) {
+      return;
+    }
+    bundleDrop
+      .getAllClaimerAddresses("0")
+      .then((addresses) => {
+        console.log("🚀 Members addresses", addresses);
+        setMemberAddresses(addresses);
+      })
+      .catch((error) => {
+        console.error("failed to get member list", error);
+      });
+  }, [hasClaimedNFT]);
+
+  useEffect(() => {
+    if (!hasClaimedNFT) {
+      return;
+    }
+    tokenModule
+      .getAllHolderBalances()
+      .then((amount) => {
+        console.log("👜 Amounts", amount);
+        setMemberTokenAmounts(amount);
+      })
+      .catch((error) => {
+        console.error("failed to get token amounts", error);
+      });
+  }, [hasClaimedNFT]);
+
+  const memberList = useMemo(() => {
+    return memberAddresses.map((address) => {
+      return {
+        address,
+        tokenAmount: ethers.utils.formatUnits(
+          memberTokenAmounts[address] || 0,
+          18
+        ),
+      };
+    });
+  }, [memberTokenAmounts, memberAddresses]);
 
   const signer = provider ? provider.getSigner() : undefined;
   const [isClaimingNFT, setIsClaimingNFT] = useState(false);
@@ -72,6 +125,29 @@ const App = () => {
       <div className="member-page">
         <h1>🍪DAO Member Page</h1>
         <p>Congratulations on being a member</p>
+        <div>
+          <div>
+            <h2>Member List</h2>
+            <table className="card">
+              <thead>
+                <tr>
+                  <th>Address</th>
+                  <th>Token Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                {memberList.map((member) => {
+                  return (
+                    <tr key={member.address}>
+                      <td>{shortenAddress(member.address)}</td>
+                      <td>{member.tokenAmount}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     );
   }
