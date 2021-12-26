@@ -2,7 +2,7 @@ import { ethers } from "ethers";
 import sdk from "./1-initialize-sdk.js";
 
 const tokenModule = sdk.getTokenModule(
-  "0xB51B51BBDcfEc95af4fb5a32Fa32FB1EC7dbBbc2"
+  "0x9e38428b3127C4C43C692a5F234688EAD13A0309"
 );
 
 (async () => {
@@ -17,6 +17,6 @@ const tokenModule = sdk.getTokenModule(
       "$CHM in circulation"
     );
   } catch (error) {
-    console.error("Faiked to print money", error);
+    console.error("Failed to print money", error);
   }
 })();

@@ -8,7 +8,7 @@ const appModule = sdk.getAppModule(
   try {
     const voteModule = await appModule.deployVoteModule({
       name: "CheemDAO's Epic Proposals",
-      votingTokenAddress: "0xB51B51BBDcfEc95af4fb5a32Fa32FB1EC7dbBbc2",
+      votingTokenAddress: "0x9e38428b3127C4C43C692a5F234688EAD13A0309",
       proposalStartWaitTimeInSeconds: 0,
       proposalVotingTimeInSeconds: 24 * 60 * 60,
       votingQuorumFraction: 0,

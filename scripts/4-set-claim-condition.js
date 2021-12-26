@@ -1,7 +1,7 @@
 import sdk from "./1-initialize-sdk.js";
 
 const bundleDrop = sdk.getBundleDropModule(
-  "0x616b3164e44F169E0725eBf440A75bcFc4B951D9"
+  "0xaBb27Eb2F9C8271dfdc0810cB51807F535042D1D"
 );
 
 (async () => {
@@ -13,7 +13,10 @@ const bundleDrop = sdk.getBundleDropModule(
       maxQuantityPerTransaction: 1,
     });
     await bundleDrop.setClaimCondition(0, claimConditionFactory);
-    console.log("✅ Sucessfully set claim condition!");
+    console.log(
+      "✅ Sucessfully set claim condition on bundle drop:",
+      bundleDrop.address
+    );
   } catch (error) {
     console.error("Failed to set claim condition", error);
   }

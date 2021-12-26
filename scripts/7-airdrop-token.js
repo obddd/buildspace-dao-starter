@@ -2,24 +2,24 @@ import { ethers } from "ethers";
 import sdk from "./1-initialize-sdk.js";
 
 const bundleDropModule = sdk.getBundleDropModule(
-  "0x616b3164e44F169E0725eBf440A75bcFc4B951D9"
+  "0xaBb27Eb2F9C8271dfdc0810cB51807F535042D1D"
 );
 
 const tokenModule = sdk.getTokenModule(
-  "0xB51B51BBDcfEc95af4fb5a32Fa32FB1EC7dbBbc2"
+  "0x9e38428b3127C4C43C692a5F234688EAD13A0309"
 );
 
 (async () => {
   try {
-    const walletAddress = await bundleDropModule.getAllClaimerAddresses("0");
+    const walletAddresses = await bundleDropModule.getAllClaimerAddresses("0");
 
-    if (walletAddress.length === 0) {
+    if (walletAddresses.length === 0) {
       console.log(
         "No NFTs have been claimed yet, maybe get some friends to claim your free NFTs!"
       );
       process.exit(0);
     }
-    const airdropTargets = walletAddress.map((address) => {
+    const airdropTargets = walletAddresses.map((address) => {
       const randomAmount = Math.floor(
         Math.random() * (10000 - 1000 + 1) + 1000
       );
@@ -30,6 +30,7 @@ const tokenModule = sdk.getTokenModule(
       };
       return airdropTarget;
     });
+
     console.log("🌈 Starting airdrop...");
     await tokenModule.transferBatch(airdropTargets);
     console.log(
